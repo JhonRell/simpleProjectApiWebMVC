@@ -1,0 +1,88 @@
+﻿@using Frontend.Models
+@model EmployeeHolder
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>EmployeeDetails</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body class="bg-light">
+
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+        <div class="w-100" style="max-width: 500px;">
+
+            @if (Model.employeeHolder != null && Model.employeeHolder.Any())
+            {
+                foreach (Employee item in Model.employeeHolder)
+                {
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-primary">
+                            Hello @item.last_name, @item.first_name!
+                        </h2>
+                    </div>
+
+                    <div class="card p-4 shadow-lg rounded-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Employee ID</label>
+                            <input class="form-control" type="text" value="@item.employee_id" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input class="form-control" type="text" value="@item.email" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Gender</label>
+                            <input class="form-control" type="text" value="@item.gender" readonly>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a href="@Url.Action("EmployeeData","Employee")"
+                               class="btn btn-outline-primary w-100">
+                                Back to List
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+                    <div id="noDataToast" class="toast align-items-center text-bg-danger border-0 show" role="alert">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                No Data
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    <script src="~/Scripts/jquery-3.7.1.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var toastEl = document.getElementById('noDataToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+                toast.show();
+            }
+        });
+    </script>
+
+</body>
+</html>

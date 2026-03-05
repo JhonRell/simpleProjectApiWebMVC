@@ -1,0 +1,289 @@
+﻿@using Frontend.Models
+@model EmployeeHolder
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Employee Data</title>
+
+    <!-- ================== Bootstrap CSS ================== -->
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- ================== Custom CSS ================== -->
+    <style>
+        body {
+            background: linear-gradient(to right, #198754, #ffc107);
+            min-height: 100vh;
+        }
+
+        .card-custom {
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .table thead {
+            background-color: #198754;
+            color: white;
+        }
+
+        .table tbody tr:hover {
+            background-color: transparent;
+        }
+
+        .employee-link:hover {
+            color: #ffc107 !important;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================== Scripts ================== -->
+    <script src="~/Scripts/jquery-3.7.1.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.js"></script>
+
+    <!-- ================== Main Container ================== -->
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card card-custom p-4 w-100" style="max-width: 1000px;">
+
+            <!-- ================== Header ================== -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-success m-0">Employee Data</h2>
+                <button class="btn btn-primary" type="button" id="addEmp" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                    Add Employee
+                </button>
+            </div>
+
+            <!-- ================== Employee Table ================== -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th>Employee ID</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                            <th>Gender</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (Employee item in Model.employeeHolder)
+                        {
+                        <tr>
+                            <td>
+                                <a href="javascript:void(0);"
+                                   class="employee-link fw-bold text-success"
+                                   data-employee-id="@item.employee_id"
+                                   style="text-decoration:none;">
+                                    @item.employee_id
+                                </a>
+                            </td>
+                            <td>@item.first_name</td>
+                            <td>@item.last_name</td>
+                            <td>@item.gender</td>
+                            <td>
+                                @item.email
+                                <button type="button"
+                                        class="btn btn-sm btn-success bg-gradient ms-2"
+                                        data-employee-id="@item.employee_id"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#emailEditModal">
+                                    <i class="bi bi-pencil-fill me-1"></i> Edit
+                                </button>
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- ================== End Main Container ================== -->
+    <!-- ================== Toasts ================== -->
+    <!-- Bottom-right toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="loadingToast" class="toast align-items-center text-bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">Loading employee data...</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Center toast -->
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3">
+        <div class="toast" role="alert" data-bs-delay="800">
+            <div class="d-flex">
+                <div class="toast-body">Hello, what can I do for you?</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+    <!-- ================== End Toasts ================== -->
+    <!-- ================== Modals ================== -->
+    <!-- Edit Email Modal -->
+    <div class="modal fade" id="emailEditModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Email</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="email" class="form-control" id="emailInput" placeholder="Input a valid email address" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="confirmEmailChange">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Edit Email Modal -->
+    <!-- Add Employee Modal -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add new Employee</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-2" id="employeeIdInput" placeholder="Employee ID" />
+                    <input type="text" class="form-control mb-2" id="firstNameInput" placeholder="Firstname" />
+                    <input type="text" class="form-control mb-2" id="lastNameInput" placeholder="Lastname" />
+                    <input type="text" class="form-control mb-2" id="genderInput" placeholder="Gender" />
+                    <input type="text" class="form-control" id="addEmailInput" placeholder="Email" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="addEmployee">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Add Employee Modal -->
+    <!-- ================== End Modals ================== -->
+    <!-- ================== Scripts ================== -->
+    <script>
+        // ---------- Add new Employee ----------
+        $("#addEmployee").click(function () {
+            let button = $(this);
+
+            let employee_id = $("#employeeIdInput").val().trim();
+            let first_name = $("#firstNameInput").val().trim();
+            let last_name = $("#lastNameInput").val().trim();
+            let gender = $("#genderInput").val().trim();
+            let email = $("#addEmailInput").val().trim();
+
+            if (employee_id === "" || first_name === "" || last_name === "" || gender === "" || email === "") {
+                showToast("All fields are required.");
+                return;
+            }
+
+            button.prop('disabled', true);
+            let originalText = button.text();
+            button.text("Processing...");
+
+            $.ajax({
+                url: '@Url.Action("CreateData", "Employee")',
+                type: 'POST',
+                data: { employee_id: employee_id, first_name: first_name, last_name: last_name, gender: gender, email: email },
+                dataType: 'text',
+                success: function (response) {
+                    showToast(response || "Employee added successfully!", true);
+                    setTimeout(function () {
+                        const modalElement = document.getElementById('addEmployeeModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) modalInstance.hide();
+                        location.reload();
+                    }, 3000);
+                },
+                error: function (jqXHR) {
+                    showToast(jqXHR.responseText || "Unable to process.");
+                    button.prop('disabled', false);
+                    button.text(originalText);
+                }
+            });
+        });
+
+        // ---------- Employee Details ----------
+        $(".employee-link").click(function () {
+            var employeeId = $(this).data("employee-id");
+            $("#loadingToast .toast-body").text("Loading employee data...");
+            var toastEl = document.getElementById("loadingToast");
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+
+            setTimeout(function () {
+                var baseUrl = '@Url.Action("EmployeeDetails", "Employee")';
+                window.location.href = baseUrl + '/' + encodeURIComponent(employeeId);
+            }, 800);
+        });
+
+        var selectedEmployeeId = null;
+
+        $(".btn-success.bg-gradient").click(function () {
+            selectedEmployeeId = $(this).data("employee-id");
+        });
+
+        $('#confirmEmailChange').off('click').on('click', function () {
+            let button = $(this);
+            let emailInput = $("#emailInput")[0];
+            let email = $("#emailInput").val().trim();
+
+            if (email === "") {
+                showToast("Email is required.");
+                return;
+            }
+
+            if (!emailInput.checkValidity()) {
+                showToast("Invalid email.");
+                return;
+            }
+
+            button.prop('disabled', true);
+            let originalText = button.text();
+            button.text("Updating...");
+
+            $.ajax({
+                url: '@Url.Action("UpdateData", "Employee")',
+                type: 'PUT',
+                data: { employee_id: selectedEmployeeId, email: email },
+                dataType: 'text',
+                success: function () {
+                    showToast("Successfully updated!", true);
+                    setTimeout(function () {
+                        const modalElement = document.getElementById('emailEditModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) modalInstance.hide();
+                        location.reload();
+                    }, 3000);
+                },
+                error: function (jqXHR) {
+                    showToast(jqXHR.responseText || "Update failed.");
+                    button.prop('disabled', false);
+                    button.text(originalText);
+                }
+            });
+        });
+
+        function showToast(message) {
+            $(".toast-body").text(message);
+            let toast = new bootstrap.Toast(document.querySelector('.toast'));
+            toast.show();
+        }
+    </script>
+    <!-- ================== End Scripts ================== -->
+
+</body>
+</html>
